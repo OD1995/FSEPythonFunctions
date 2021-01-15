@@ -10,10 +10,7 @@ from MyFunctions import (
     create_removeDuplicates_query
 )
 
-def main(req: func.HttpRequest) -> func.HttpResponse:
-    logging.info('Python HTTP trigger function processed a request.')
-
-
+def scrape_FoxSports():
     ## Get today's date in the right format
     todaysDate = datetime.strftime(
         datetime.now()
@@ -91,7 +88,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             'UTCStart' : 'DateTime',
             'UTCEnd' : 'DateTime'
             }
-    server = "non-dashboard"
+    server = "nonDashboard"
     database = "WebScraping"
     sqlTableName = "FoxSports"
     primaryKeyColName = "RowID"
@@ -104,5 +101,11 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
     run_sql_commmand(removeDuplicatesQ,server,database)
 
+def main(req: func.HttpRequest) -> func.HttpResponse:
+    logging.info('Python HTTP trigger function processed a request.')
+
+    scrape_FoxSports()
+
+    logging.info("scraping done")
 
     return func.HttpResponse(f"Done")

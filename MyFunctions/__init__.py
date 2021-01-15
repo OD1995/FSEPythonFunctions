@@ -5,7 +5,7 @@ import os
 def run_sql_commmand(query,server,database):
 
     ## Get information used to create connection string
-    if server == "non-dashboard":
+    if server == "nonDashboard":
         username = 'matt.shepherd'
         password = os.getenv("msPassword")
         driver = '{ODBC Driver 17 for SQL Server}'
@@ -20,7 +20,7 @@ def run_sql_commmand(query,server,database):
             logging.info("About to execute query below")
             logging.info(query)
             cursor.execute(query)
-            logging.info("'INSERT' query executed")
+            logging.info("Query executed")
 
 def time2secs(x):
     """
