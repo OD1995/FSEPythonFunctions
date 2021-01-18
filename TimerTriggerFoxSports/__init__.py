@@ -1,8 +1,7 @@
 import datetime
 import logging
-from HTTPTriggerFoxSports import scrape_FoxSports
+from HttpTriggerFoxSports import scrape_FoxSports
 import azure.functions as func
-
 
 def main(mytimer: func.TimerRequest) -> None:
     utc_timestamp = datetime.datetime.utcnow().replace(
