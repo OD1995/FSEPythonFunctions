@@ -3,6 +3,7 @@
 # Manually managing azure-functions-worker may cause unexpected issues
 
 azure-functions
+bs4
 pandas
 pyodbc==4.0.30
 requests==2.25.1
