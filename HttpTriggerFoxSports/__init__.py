@@ -20,7 +20,15 @@ def scrape_FoxSports():
     channels = {
                 "EPH1" : ("Fox Sports","Philippines"),
                 "F2E1" : ("Fox Sports 2","Philippines"),
-                "FM31" : ("Fox Sports 3","Philippines")
+                "FM31" : ("Fox Sports 3","Philippines"),
+                "EML1" : ("Fox Sports","Malaysia"),
+                "F2M1" : ("Fox Sports 2","Malaysia"),
+                "FM31" : ("Fox Sports 3","Malaysia"),
+                "ESG1" : ("Fox Sports","Singapore"),
+                "F2S1" : ("Fox Sports 2","Singapore"),
+                "FM31" : ("Fox Sports 3","Singapore"),
+                "SCN1" : ("Star Sports","China"),
+                "ECN1" : ("Star Sports2","China"),
                 }
 
     dfs = {}
