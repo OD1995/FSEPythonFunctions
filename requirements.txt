@@ -6,4 +6,6 @@ azure-functions
 bs4
 pandas
 pyodbc==4.0.30
+pytz
+tzlocal
 requests==2.25.1
