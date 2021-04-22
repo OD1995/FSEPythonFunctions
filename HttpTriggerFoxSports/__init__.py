@@ -42,7 +42,7 @@ def scrape_FoxSports():
 
     dfs = {}
 
-    for channelCode,(channelName,country) in channels.items():
+    for (channelName,country),channelCode in channels.items():
         loc_tz = pytz.timezone(timezones[country])
         reqURL = "https://tv.foxsportsasia.com/getEPG.php"
         reqParams = {

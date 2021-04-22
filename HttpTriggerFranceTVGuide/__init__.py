@@ -19,7 +19,9 @@ def scrape_france():
             'canalplus-decale-36',
             'c8-4',
             'cstar-28',
-            'canalplus-2']
+            'canalplus-2',
+            'lequipe-204'
+        ]
 
     dfs = {}
 

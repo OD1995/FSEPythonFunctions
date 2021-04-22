@@ -110,9 +110,9 @@ def scrape_jsports():
                     T = time(hour=4)
                 else:
                     raise ValueError("no time provided")
-            dtu = dateToUse \
+            dtu = dateToUse + timedelta(days=1) \
                     if (T >= time(hour=0)) & (T <= time(hour=4)) \
-                    else dateToUse + timedelta(days=1)
+                    else dateToUse
             tba['StartLocal'] = datetime.combine(
                                     date=dtu,
                                     time=T
