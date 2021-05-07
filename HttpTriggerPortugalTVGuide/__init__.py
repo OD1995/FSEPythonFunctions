@@ -52,57 +52,62 @@ def getEarliestUnaccountedMinuteChannels(accountedMinutes):
 def scrape_portugal():    
     utc_tz = pytz.timezone("utc")
     por_tz = pytz.timezone("Europe/Lisbon")
-
-    url = "https://www.nos.pt/particulares/televisao/guia-tv/Pages/channel.aspx?channel=532"
-    todayDate = datetime.now().date()
-    req = requests.get(url)
-    soup = BS(req.text,'html.parser')
-
-    ## Get first column (today's column)
-    firstCol = soup.find("div",attrs={'class':["programs-day-list","active-day"]})
-    boxes = firstCol.find_all('li')
+    ## List of channels to loop through
+    ch = [
+        (532,"Eleven Sports 3"),
+        (514,"Eleven Sports 4")
+    ]
     progs = []
-    for i,li in enumerate(boxes):
-        tba = {}
-        ## Channel
-        tba['Channel'] = "Eleven Sport 3"
-        ## ProgrammeName
-        tba['ProgrammeName'] = li.a['title']
-        ## Start & End
-        seText = li.find('span',attrs={'class':'duration'}).text.strip()
-        for punc in ["\r","\n"," "]:
-            seText = seText.replace(punc,"")
-        start,end = seText.split("-")
-        startT = datetime.strptime(start,"%H:%M").time()
-        endT = datetime.strptime(end,"%H:%M").time()
-        ## If first start time is yesterday, adjust for that
-        if (i == 0) & (startT.hour > 12):
-            startDT = datetime.combine(
-                        date=todayDate - timedelta(days=1),
-                        time=startT
-                )
-        else:
-            startDT = datetime.combine(
-                        date=todayDate,
-                        time=startT
-                )
-        endDT = datetime.combine(
-                        date=todayDate,
-                        time=endT
-                )
-        tba['StartLocal'] = startDT
-        tba['EndLocal'] = endDT
-        tba['StartUTC'] = por_tz.localize(
-                                    tba['StartLocal']
-                                        ).astimezone(
-                                                utc_tz
-                                                    ).replace(tzinfo=None)
-        tba['EndUTC'] = por_tz.localize(
-                                    tba['EndLocal']
-                                        ).astimezone(
-                                                utc_tz
-                                                    ).replace(tzinfo=None)
-        progs.append(tba)
+    for channelID,channelName in ch:
+        url = f"https://www.nos.pt/particulares/televisao/guia-tv/Pages/channel.aspx?channel={channelID}"
+        todayDate = datetime.now().date()
+        req = requests.get(url)
+        soup = BS(req.text,'html.parser')
+
+        ## Get first column (today's column)
+        firstCol = soup.find("div",attrs={'class':["programs-day-list","active-day"]})
+        boxes = firstCol.find_all('li')
+        for i,li in enumerate(boxes):
+            tba = {}
+            ## Channel
+            tba['Channel'] = channelName
+            ## ProgrammeName
+            tba['ProgrammeName'] = li.a['title']
+            ## Start & End
+            seText = li.find('span',attrs={'class':'duration'}).text.strip()
+            for punc in ["\r","\n"," "]:
+                seText = seText.replace(punc,"")
+            start,end = seText.split("-")
+            startT = datetime.strptime(start,"%H:%M").time()
+            endT = datetime.strptime(end,"%H:%M").time()
+            ## If first start time is yesterday, adjust for that
+            if (i == 0) & (startT.hour > 12):
+                startDT = datetime.combine(
+                            date=todayDate - timedelta(days=1),
+                            time=startT
+                    )
+            else:
+                startDT = datetime.combine(
+                            date=todayDate,
+                            time=startT
+                    )
+            endDT = datetime.combine(
+                            date=todayDate,
+                            time=endT
+                    )
+            tba['StartLocal'] = startDT
+            tba['EndLocal'] = endDT
+            tba['StartUTC'] = por_tz.localize(
+                                        tba['StartLocal']
+                                            ).astimezone(
+                                                    utc_tz
+                                                        ).replace(tzinfo=None)
+            tba['EndUTC'] = por_tz.localize(
+                                        tba['EndLocal']
+                                            ).astimezone(
+                                                    utc_tz
+                                                        ).replace(tzinfo=None)
+            progs.append(tba)
         
     DF = pd.DataFrame(progs)
 
