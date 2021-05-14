@@ -3,6 +3,7 @@ import logging
 import azure.functions as func
 
 from datetime import datetime, timedelta, time, date
+from azure.functions._thirdparty.werkzeug import datastructures
 import requests
 from bs4 import BeautifulSoup as BS
 import pytz
@@ -14,15 +15,19 @@ from MyFunctions import (
     create_removeDuplicates_query
 )
 
-def scrape_mexico():    
+def scrape_mexico(
+    dateStr=None
+):    
     ## Get the system's timezone
     system_tz = get_localzone()
     utc_tz = pytz.timezone("utc")
     mx_tz = pytz.timezone("America/Mexico_City")
-
-    todayDate = datetime.now()
-    todayStr = todayDate.strftime("%Y-%m-%d")
-
+    if dateStr is None:
+        dateDT = datetime.now()
+        dateStr = dateDT.strftime("%Y-%m-%d")
+    else:
+        dateDT = datetime.strptime(dateStr,"%Y-%m-%d")
+    logging.info(f"dateStr: {dateStr}")
     ccs = [
         ("claro_sports","Claro Sports")
         ]
@@ -34,7 +39,8 @@ def scrape_mexico():
     progs = []
     for code,clean in ccs:
         
-        url = f"https://www.gatotv.com/canal/{code}/{todayStr}"
+        url = f"https://www.gatotv.com/canal/{code}/{dateStr}"
+        logging.info(f"url: {url}")
         req = requests.get(url)
         soup = BS(req.text,'html.parser')
         
@@ -52,7 +58,7 @@ def scrape_mexico():
             tba = {}
             ## Start & End
             startDT,endDT = [datetime.combine(
-                                date=todayDate,
+                                date=dateDT,
                                 time=datetime.strptime(x.text.strip(),"%H:%M").time())
                             for x in pr.find_all('div')[:2]]
             
@@ -113,7 +119,9 @@ def scrape_mexico():
 def main(req: func.HttpRequest) -> func.HttpResponse:
     logging.info('Python HTTP trigger function processed a request.')
 
-    scrape_mexico()
+    dateStr = req.params.get("dateStr")
+
+    scrape_mexico(dateStr)
 
     logging.info("scraping done")
 
