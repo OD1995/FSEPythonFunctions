@@ -81,7 +81,7 @@ def sqlise(_val_,_format_):
     if _val_ is None:
         return "NULL"
     elif _format_ == "str":
-        return "'" + _val_.replace("'","''") + "'"
+        return "'" + str(_val_).replace("'","''") + "'"
     elif _format_ == "DateTime":
         ## datetime gives 6 microsecond DPs, SQL only takes 3
         return "'" + _val_.strftime("%Y-%m-%d %H:%M:%S.%f")[:-3] + "'"

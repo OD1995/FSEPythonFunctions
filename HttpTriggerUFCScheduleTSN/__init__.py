@@ -14,7 +14,7 @@ def get_soup(URL):
     return BS(r.text,'html.parser')
 
 def get_schedule_url(BASE_URL):
-    print("Navigating to schedule...")
+    logging.info("Navigating to schedule...")
     # Go to TSN UFC home page
     home_page_soup = get_soup(BASE_URL)
     
@@ -25,7 +25,7 @@ def get_schedule_url(BASE_URL):
 
 def get_tsn_schedule(BASE_URL,COL_HEADS):
     date_recorded = datetime.now()
-    print("{}: Collecting TSN UFC schedule".format(date_recorded.strftime("%Y-%m-%d %H:%M")))
+    logging.info("{}: Collecting TSN UFC schedule".format(date_recorded.strftime("%Y-%m-%d %H:%M")))
     # Scrape the event names, dates and TSN feeds
     schedule_url = get_schedule_url(BASE_URL)
     schedule_page_soup = get_soup(schedule_url)
