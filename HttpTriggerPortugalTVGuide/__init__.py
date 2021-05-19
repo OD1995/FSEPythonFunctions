@@ -55,7 +55,9 @@ def scrape_portugal():
     ## List of channels to loop through
     ch = [
         (532,"Eleven Sports 3"),
-        (514,"Eleven Sports 4")
+        (514,"Eleven Sports 4"),
+        (10,"Eurosport 1"),
+        (128,"Eurosport 2")
     ]
     progs = []
     for channelID,channelName in ch:
