@@ -1,19 +1,40 @@
 import logging
 import pyodbc
 import os
+import pandas as pd
+
+def get_df_from_sqlQuery(
+    sqlQuery,
+    database
+):
+    ## Create connection string
+    connectionString = get_connection_string(database)
+    logging.info(f'Connection string created: {connectionString}')
+    ## Execute SQL query and get results into df 
+    with pyodbc.connect(connectionString) as conn:
+        ## Get SQL table in pandas DataFrame
+        df = pd.read_sql(sql=sqlQuery,
+                            con=conn)
+    return df
+
+def get_connection_string(database):
+    username = 'matt.shepherd'
+    password = os.getenv("msPassword")
+    driver = '{ODBC Driver 17 for SQL Server}'
+    # driver = 'SQL Server Native Client 11.0'
+    server = os.getenv("nonDashboard")
+    # database = 'AzureCognitive'
+    ## Create connection string
+    connectionString = f'DRIVER={driver};SERVER={server};PORT=1433;DATABASE={database};UID={username};PWD={password}'
+    return connectionString
 
 def run_sql_commmand(query,server,database):
 
     ## Get information used to create connection string
     if server == "nonDashboard":
-        username = 'matt.shepherd'
-        password = os.getenv("msPassword")
-        driver = '{ODBC Driver 17 for SQL Server}'
-        serverLong = os.getenv(server)
+        connectionString = get_connection_string(database)
     else:
         raise ValueError(f"This function is not yet developed for server = `{server}`")
-    ## Create connection string
-    connectionString = f'DRIVER={driver};SERVER={serverLong};PORT=1433;DATABASE={database};UID={username};PWD={password}'
     ## Execute query
     with pyodbc.connect(connectionString) as conn:
         with conn.cursor() as cursor:
