@@ -54,8 +54,12 @@ def scrape_portugal():
     por_tz = pytz.timezone("Europe/Lisbon")
     ## List of channels to loop through
     ch = [
+        (518,'Eleven Sports 1'),
+        (519,'Eleven Sports 2'),
         (532,"Eleven Sports 3"),
         (514,"Eleven Sports 4"),
+        (515,"Eleven Sports 5"),
+        (516,"Eleven Sports 6"),
         (10,"Eurosport 1"),
         (128,"Eurosport 2")
     ]
