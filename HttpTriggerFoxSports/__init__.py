@@ -42,7 +42,8 @@ def scrape_FoxSports():
 
     dfs = {}
 
-    for (channelName,country),channelCode in channels.items():
+    for channelName_country,channelCode in channels.items():
+        channelName,country = channelName_country
         loc_tz = pytz.timezone(timezones[country])
         reqURL = "https://tv.foxsportsasia.com/getEPG.php"
         reqParams = {
@@ -83,7 +84,7 @@ def scrape_FoxSports():
                 for le in channelDF.LocalEnd
         ]
         ## Add to dict
-        dfs[channelCode] = channelDF
+        dfs[channelName_country] = channelDF
         logging.info(f"channelName: {channelName}")
         logging.info(f"country: {country}")
         logging.info(f"rows: {len(channelDF)}")

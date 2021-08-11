@@ -56,7 +56,7 @@ def scrape_portugal():
     ch = [
         (518,'Eleven Sports 1'),
         (519,'Eleven Sports 2'),
-        (532,"Eleven Sports 3"),
+        (513,"Eleven Sports 3"),
         (514,"Eleven Sports 4"),
         (515,"Eleven Sports 5"),
         (516,"Eleven Sports 6"),
