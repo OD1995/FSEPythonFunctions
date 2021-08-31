@@ -7,7 +7,8 @@ import azure.functions as func
 #import urllib.request
 
 # from azure.storage.blob import BlobClient
-from azure.storage.blob import BlobServiceClient
+# from azure.storage.blob import BlobServiceClient
+from azure.storage.blob import BlockBlobService
 # import s3fs
 # from io import BytesIO
 # import tweepy
@@ -20,21 +21,30 @@ import datetime
 #from urllib.request import urlopen
 # from bs4 import BeautifulSoup as bs
 # import boto3
+from CrowdTangleAPI import Dashboard, api_url
+import time
+import requests
 
 
 def scrape_CrowdTangle():
 
     #blob_service_client = BlobServiceClient(account_url=sas_url, credential=sas_token)
-    sas_url='https://octagonsocialdata.blob.core.windows.net/?sv=2019-12-12&ss=b&srt=co&sp=rwlacx&se=2030-09-17T18:10:12Z&st=2020-09-17T10:10:12Z&spr=https&sig=zmJBn%2BDiUbaQozYvMkyj%2FCDUUI1PGo7%2BfBWTMnsvTRY%3D'
-    sas_token =  '?sv=2019-12-12&ss=b&srt=co&sp=rwlacx&se=2030-09-17T18:10:12Z&st=2020-09-17T10:10:12Z&spr=https&sig=zmJBn%2BDiUbaQozYvMkyj%2FCDUUI1PGo7%2BfBWTMnsvTRY%3D'
-    blob_service_client = BlobServiceClient(account_url=sas_url, credential=sas_token)
+    # sas_url='https://octagonsocialdata.blob.core.windows.net/?sv=2019-12-12&ss=b&srt=co&sp=rwlacx&se=2030-09-17T18:10:12Z&st=2020-09-17T10:10:12Z&spr=https&sig=zmJBn%2BDiUbaQozYvMkyj%2FCDUUI1PGo7%2BfBWTMnsvTRY%3D'
+    # sas_token =  '?sv=2019-12-12&ss=b&srt=co&sp=rwlacx&se=2030-09-17T18:10:12Z&st=2020-09-17T10:10:12Z&spr=https&sig=zmJBn%2BDiUbaQozYvMkyj%2FCDUUI1PGo7%2BfBWTMnsvTRY%3D'
+    # blob_service_client = BlobServiceClient(
+    #     account_url=sas_url,
+    #     credential=sas_token
+    # )
+    bbs = BlockBlobService(
+        connection_string='DefaultEndpointsProtocol=https;AccountName=octagonsocialdata;AccountKey=XsuDBxapWwCMQgHib2GiS1Ii96f2+b6Gkjcu1+gPjrRg28zkPzNv1S6+JGkWIwGCHGbO2jkYo5NrVLb2tKEZqg==;EndpointSuffix=core.windows.net'
+    )
 
     fb_api_token = 'vFIzJxjrUp83wKc2ZK6RhfGy3Eu3Ud0OCJaDkDcc'
     insta_api_token = 'T8rE357isKx2WzigmPznBXqvC7rsZAfS4AyGvYsy'
 
-    bucket = 'futures-fb-daily'
+    # bucket = 'futures-fb-daily'
 
-    cpm_value = 9
+    # cpm_value = 9
     list_of_terms = [""] #['pros', 'cisco']
     start_date_val = str(datetime.date.today() - datetime.timedelta(days=1))
     end_date_val = str(datetime.date.today())
@@ -46,7 +56,7 @@ def scrape_CrowdTangle():
                             ['futures_ig_aus', 1462861]]
 
     #exec('./crowdtangle_api.py')
-    exec(open('/home/ubuntu/AWS-Lightsail/crowdtangle_api.py').read())
+    # exec(open('/home/ubuntu/AWS-Lightsail/crowdtangle_api.py').read())
     d = Dashboard(api_url)
 
     # convert list to the string format needed for crowdtangle
@@ -137,8 +147,13 @@ def scrape_CrowdTangle():
     #    fs = s3fs.S3FileSystem(key=ACCESS_KEY, secret=SECRET_KEY)
     #    with fs.open('s3://futures-fb-daily/' + campaign[0] + '-' + str(datetime.date.today()) + '.csv', 'wb') as f:
     #        f.write(bytes_to_write)
-        blob_client = blob_service_client.get_blob_client("philcontainertest", campaign[0] + "-" + str(datetime.date.today()) + "_accounts.csv")
-        blob_client.upload_blob(bytes_to_write, blob_type="BlockBlob")
+        # blob_client = blob_service_client.get_blob_client("philcontainertest", campaign[0] + "-" + str(datetime.date.today()) + "_accounts_Azure.csv")
+        # blob_client.upload_blob(bytes_to_write, blob_type="BlockBlob")
+        bbs.create_blob_from_bytes(
+            container_name="philcontainertest",
+            blob_name=campaign[0] + "-" + str(datetime.date.today()) + "_accounts_Azure.csv",
+            blob=bytes_to_write
+        )
 
     # file_name = campaign[0] + '-' + str(datetime.date.today()) +  '.csv'
     # csv_buffer = BytesIO()
@@ -223,8 +238,13 @@ def scrape_CrowdTangle():
                                             'profile_img'],
                                 data = instagram_posts)
         bytes_to_write = facebook_df.to_csv(None).encode()
-        blob_client = blob_service_client.get_blob_client("philcontainertest", campaign[0] + "-" + str(datetime.date.today()) + "_accounts.csv")
-        blob_client.upload_blob(bytes_to_write, blob_type="BlockBlob")
+        # blob_client = blob_service_client.get_blob_client("philcontainertest", campaign[0] + "-" + str(datetime.date.today()) + "_accounts_Azure.csv")
+        # blob_client.upload_blob(bytes_to_write, blob_type="BlockBlob")
+        bbs.create_blob_from_bytes(
+            container_name="philcontainertest",
+            blob_name=campaign[0] + "-" + str(datetime.date.today()) + "_accounts_Azure.csv",
+            blob=bytes_to_write
+        )
 
     ###################################
     #                                 #
@@ -427,8 +447,15 @@ def scrape_CrowdTangle():
                         'account_accountType'])
 
     bytes_to_write = posts_df.to_csv(None).encode()
-    blob_client = blob_service_client.get_blob_client("philcontainertest", "search_ig_and_fb" + "-" + str(datetime.date.today()) + "_search.csv")
-    blob_client.upload_blob(bytes_to_write, blob_type="BlockBlob")
+    # blob_client = blob_service_client.get_blob_client(
+    #     "philcontainertest", "search_ig_and_fb" + "-" + str(datetime.date.today()) + "_search_Azure.csv"
+    # )
+    # blob_client.upload_blob(bytes_to_write, blob_type="BlockBlob")
+    bbs.create_blob_from_bytes(
+        container_name="philcontainertest",
+        blob_name="search_ig_and_fb" + "-" + str(datetime.date.today()) + "_search_Azure.csv",
+        blob=bytes_to_write
+    )
 
 
 
@@ -436,3 +463,5 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     logging.info('Python HTTP trigger function processed a request.')
 
     scrape_CrowdTangle()
+
+    return func.HttpResponse("Done")
