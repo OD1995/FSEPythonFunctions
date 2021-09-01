@@ -1,5 +1,4 @@
 import logging
-
 import azure.functions as func
 
 
@@ -70,6 +69,10 @@ def scrape_CrowdTangle():
 
 
     for campaign in list_of_campaigns:
+        logging.info('Campaign: ')
+        logging.info(campaign)
+
+
         facebook_posts = d.get_posts(start_date_val, campaign[1], fb_api_token, terms, end_date_val)
 
         fb_posts = []
@@ -165,6 +168,8 @@ def scrape_CrowdTangle():
     # upload_to_aws('./' + file_name, 'futures-fb-daily', file_name)
 
     for campaign in list_of_ig_campaigns:
+        logging.info('Instagram campaign: ')
+        logging.info(campaign)
 
         insta_posts = d.get_posts(start_date_val, campaign[1], insta_api_token, terms, end_date_val)
 
