@@ -57,10 +57,14 @@ def scrape_mexico(
         for pr in progRows:
             tba = {}
             ## Start & End
-            startDT,endDT = [datetime.combine(
-                                date=dateDT,
-                                time=datetime.strptime(x.text.strip(),"%H:%M").time())
-                            for x in pr.find_all('div')[:2]]
+            startDT,endDT = [
+                datetime.combine(
+                    date=dateDT,
+                    time=datetime.strptime(
+                        x.text.replace("AM","").strip(),"%H:%M").time()
+                    )
+                for x in pr.find_all('div')[:2]
+            ]
             
             tba['StartLocal'] = system_tz.localize(
                                     startDT
